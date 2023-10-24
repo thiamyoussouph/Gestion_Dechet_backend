@@ -1,5 +1,6 @@
 package com.nola.gestiondechet.Security;
 
+import com.nola.gestiondechet.Entities.JWT;
 import com.nola.gestiondechet.Services.UtilisateurService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
 private UtilisateurService utilisateurService;
+
 private JwtService jwtService;
     public JwtFilter(UtilisateurService utilisateurService, JwtService jwtService) {
         this.utilisateurService = utilisateurService;
@@ -23,12 +25,14 @@ private JwtService jwtService;
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        JWT tokenDansLaBase;
         String token=null;
         String username=null;
         boolean isTokenExpired = true;
         final String authorization=request.getHeader("Authorization");
         if(authorization!=null && authorization.startsWith("Bearer ")){
             token=authorization.substring(7);
+            this.jwtService.tokenbyvalue(token);
             isTokenExpired = jwtService.isTokenExpired(token);
             username=this.jwtService.extractUsername(token);
 

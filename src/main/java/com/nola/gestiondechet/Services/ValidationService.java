@@ -5,6 +5,7 @@ import com.nola.gestiondechet.Repository.ValidationRepository;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Random;
@@ -12,6 +13,7 @@ import java.util.Random;
 import static java.time.temporal.ChronoUnit.MINUTES;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class ValidationService {
     private ValidationRepository validationRepository;

@@ -34,10 +34,11 @@ public class ConfigurationSecutiteApplication {
             httpSecurity
                     .csrf(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(
-                         authorize -> authorize.requestMatchers(POST,"/inscription","/connexion","/activation").permitAll()
-                        .anyRequest().authenticated()
+                         authorize -> authorize.requestMatchers(POST,"/inscription","/connexion","/activation")
+                                 .permitAll()
+                                 .anyRequest().authenticated()
 
-                         )
+                    )
                     .sessionManagement((httpSecuritySessionManagementConfigurer ->
                             httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     ))
@@ -47,6 +48,7 @@ public class ConfigurationSecutiteApplication {
 
     }
     @Bean
+
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
    return   authenticationConfiguration.getAuthenticationManager();
     }

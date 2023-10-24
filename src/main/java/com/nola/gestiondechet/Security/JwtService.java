@@ -1,6 +1,9 @@
 package com.nola.gestiondechet.Security;
 
+import com.nola.gestiondechet.Entities.JWT;
 import com.nola.gestiondechet.Entities.Utilisateur;
+
+import com.nola.gestiondechet.Repository.JwtRepository;
 import com.nola.gestiondechet.Services.UtilisateurService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -8,21 +11,40 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
+@Transactional
 @AllArgsConstructor
 @Service
 public class JwtService {
+    public static final String BEARER = "bearer";
     private UtilisateurService utilisateurService;
+    private JwtRepository jwtRepository;
+    public void tokenbyvalue(String value) {
+      return this.jwtRepository.findByValue(value);
+    }
     private final String ENCRIPTION_KEY = "608f36e92dc66d97d5933f0e6371493cb4fc05b1aa8f8de64014732472303a7c";
     public Map<String, String> generate(String username) {
         Utilisateur utilisateur= (Utilisateur) this.utilisateurService.loadUserByUsername(username);
 
-        return this.generateJwt(utilisateur);
+         final Map<String, String> jwtMap = this.generateJwt(utilisateur);
+
+       final JWT jwt= JWT.builder()
+               .valeur(jwtMap.get(BEARER))
+               .deactive(false)
+               .expire(false)
+               .utilisateur(utilisateur)
+               .build();
+       this.jwtRepository.save(jwt);
+        return jwtMap;
     }
 
     private Map<String, String> generateJwt(Utilisateur utilisateur) {
@@ -43,7 +65,7 @@ public class JwtService {
 
 
 
-        return Map.of("bearer",bearer);
+        return Map.of(BEARER,bearer);
     }
 
     private Key getKey() {
@@ -78,4 +100,6 @@ return Keys.hmacShaKeyFor(decoder);
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+
 }
