@@ -37,6 +37,10 @@ public class UtilisationController {
         utilisateurService.activation(activation);
     }
 
+    @PostMapping(path = "/deconnexion")
+    public void deconexion() {
+        this.jwtService.deconnexion();
+    }
 
     @PostMapping(path = "/connexion")
     public Map<String,String>connexion(@RequestBody AuthentificationDto authentificationDto){
@@ -52,6 +56,10 @@ if(authenticate.isAuthenticated()){
     public Utilisateur  getCurrentUser(Principal principal) {
 
         return (Utilisateur) utilisateurService.loadUserByUsername(principal.getName());
+    }
+    @PostMapping(path = "/refresh-token")
+    public @ResponseBody Map<String,String> refreshToken(@RequestBody Map<String,String> refreshTokenRequest){
+        return this.jwtService.refreshToken(refreshTokenRequest);
     }
 
 }

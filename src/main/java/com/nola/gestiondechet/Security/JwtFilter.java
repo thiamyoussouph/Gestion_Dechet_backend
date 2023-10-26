@@ -25,19 +25,21 @@ private JwtService jwtService;
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        JWT tokenDansLaBase;
+        JWT tokenDansLaBase = null;
         String token=null;
         String username=null;
         boolean isTokenExpired = true;
         final String authorization=request.getHeader("Authorization");
         if(authorization!=null && authorization.startsWith("Bearer ")){
             token=authorization.substring(7);
-            this.jwtService.tokenbyvalue(token);
+            tokenDansLaBase=this.jwtService.tokenbyvalue(token);
             isTokenExpired = jwtService.isTokenExpired(token);
             username=this.jwtService.extractUsername(token);
 
     }
-        if(!isTokenExpired && username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
+        if(
+                !isTokenExpired  && tokenDansLaBase.getUtilisateur().getEmail().equals(username)
+                        &&SecurityContextHolder.getContext().getAuthentication()==null){
              UserDetails userDetails=this.utilisateurService.loadUserByUsername(username);
               UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
               SecurityContextHolder.getContext().setAuthentication(authenticationToken);

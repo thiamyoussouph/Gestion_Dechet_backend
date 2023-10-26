@@ -4,11 +4,13 @@ import com.nola.gestiondechet.Entities.Roles;
 import com.nola.gestiondechet.Entities.Utilisateur;
 import com.nola.gestiondechet.Enum.TypeDeRole;
 import com.nola.gestiondechet.Mappers.UtilisateurMappers;
+import com.nola.gestiondechet.Repository.JwtRepository;
 import com.nola.gestiondechet.Repository.RoleRepository;
 import com.nola.gestiondechet.Repository.UtilisateurRepository;
 import com.nola.gestiondechet.Services.Implement.Usereservice;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,6 +32,7 @@ public class UtilisateurService implements  UserDetailsService {
     private final ValidationService validationService;
     private final UtilisateurMappers utilisateurMappers;
     private final RoleRepository roleRepository;
+    private JwtRepository JwtRepository;
 
 
     public void inscription(Utilisateur utilisateur) {
@@ -95,4 +98,6 @@ public class UtilisateurService implements  UserDetailsService {
         utilisateur.setRole((Roles) Collections.singleton(role));
         utilisateurRepository.save(utilisateur);
     }
+
+
 }
